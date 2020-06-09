@@ -8,16 +8,26 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
+    var desktops: [Desktop]
     var body: some View {
-        Text("Hello, World!")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        List(desktops, id: \.name) { desktop in
+            DesktopView(desktop: desktop)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }.deleteDisabled(/*@START_MENU_TOKEN@*/false/*@END_MENU_TOKEN@*/)
     }
 }
 
-
-struct ContentView_Previews: PreviewProvider {
+/*struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let desktops = [
+            Desktop(path: URL(fileURLWithPath: "helloo"), key: nil),
+            Desktop(path: URL(fileURLWithPath: "hello2"), key: 4),
+            Desktop(path: URL(fileURLWithPath: "hellooo"), key: 0),
+            Desktop(path: URL(fileURLWithPath: "hello22"), key: 2)
+        ]
+        return ContentView(desktops: desktops)
     }
-}
+}*/
+

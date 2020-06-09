@@ -7,14 +7,36 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F3416A39244A99710023C01D /* DesktopMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3416A38244A99710023C01D /* DesktopMenuItem.swift */; };
+		F37E9CA1245F7BA200BC82F3 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37E9CA0245F7BA200BC82F3 /* DataManager.swift */; };
 		F3FA28CF241FEE5B00EB7536 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FA28CE241FEE5B00EB7536 /* AppDelegate.swift */; };
 		F3FA28D1241FEE5B00EB7536 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FA28D0241FEE5B00EB7536 /* ContentView.swift */; };
 		F3FA28D3241FEE5E00EB7536 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3FA28D2241FEE5E00EB7536 /* Assets.xcassets */; };
 		F3FA28D6241FEE5E00EB7536 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3FA28D5241FEE5E00EB7536 /* Preview Assets.xcassets */; };
 		F3FA28D9241FEE5E00EB7536 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F3FA28D7241FEE5E00EB7536 /* Main.storyboard */; };
+		F3FA28E2241FF9C700EB7536 /* DesktopsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FA28E1241FF9C700EB7536 /* DesktopsManager.swift */; };
+		F3FA29032420176800EB7536 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FA29022420176800EB7536 /* PreferencesWindow.swift */; };
+		F3FA290524201AB000EB7536 /* DesktopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FA290424201AB000EB7536 /* DesktopView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		F3416A34244A63AD0023C01D /* Embed XPC Services */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed XPC Services";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		F3416A38244A99710023C01D /* DesktopMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopMenuItem.swift; sourceTree = "<group>"; };
+		F37E9CA0245F7BA200BC82F3 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		F3931E56245FB5400020B453 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F3931E5E245FB5860020B453 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F3FA28CB241FEE5B00EB7536 /* Desktopify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Desktopify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3FA28CE241FEE5B00EB7536 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F3FA28D0241FEE5B00EB7536 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -23,6 +45,9 @@
 		F3FA28D8241FEE5E00EB7536 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F3FA28DA241FEE5E00EB7536 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F3FA28DB241FEE5E00EB7536 /* Desktopify.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Desktopify.entitlements; sourceTree = "<group>"; };
+		F3FA28E1241FF9C700EB7536 /* DesktopsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopsManager.swift; sourceTree = "<group>"; };
+		F3FA29022420176800EB7536 /* PreferencesWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindow.swift; sourceTree = "<group>"; };
+		F3FA290424201AB000EB7536 /* DesktopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,10 +61,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F3931E4D245FB48C0020B453 /* desktopBeGone */ = {
+			isa = PBXGroup;
+			children = (
+				F3931E56245FB5400020B453 /* main.cpp */,
+			);
+			path = desktopBeGone;
+			sourceTree = "<group>";
+		};
+		F3931E5D245FB5860020B453 /* desktopRemover */ = {
+			isa = PBXGroup;
+			children = (
+				F3931E5E245FB5860020B453 /* main.cpp */,
+			);
+			path = desktopRemover;
+			sourceTree = "<group>";
+		};
 		F3FA28C2241FEE5B00EB7536 = {
 			isa = PBXGroup;
 			children = (
 				F3FA28CD241FEE5B00EB7536 /* Desktopify */,
+				F3931E4D245FB48C0020B453 /* desktopBeGone */,
+				F3931E5D245FB5860020B453 /* desktopRemover */,
 				F3FA28CC241FEE5B00EB7536 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,7 +99,12 @@
 			isa = PBXGroup;
 			children = (
 				F3FA28CE241FEE5B00EB7536 /* AppDelegate.swift */,
+				F37E9CA0245F7BA200BC82F3 /* DataManager.swift */,
+				F3FA28E1241FF9C700EB7536 /* DesktopsManager.swift */,
+				F3416A38244A99710023C01D /* DesktopMenuItem.swift */,
+				F3FA29022420176800EB7536 /* PreferencesWindow.swift */,
 				F3FA28D0241FEE5B00EB7536 /* ContentView.swift */,
+				F3FA290424201AB000EB7536 /* DesktopView.swift */,
 				F3FA28D2241FEE5E00EB7536 /* Assets.xcassets */,
 				F3FA28D7241FEE5E00EB7536 /* Main.storyboard */,
 				F3FA28DA241FEE5E00EB7536 /* Info.plist */,
@@ -84,6 +132,7 @@
 				F3FA28C7241FEE5B00EB7536 /* Sources */,
 				F3FA28C8241FEE5B00EB7536 /* Frameworks */,
 				F3FA28C9241FEE5B00EB7536 /* Resources */,
+				F3416A34244A63AD0023C01D /* Embed XPC Services */,
 			);
 			buildRules = (
 			);
@@ -100,8 +149,8 @@
 		F3FA28C3241FEE5B00EB7536 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1130;
+				LastSwiftUpdateCheck = 1140;
+				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = "Gregory Ling";
 				TargetAttributes = {
 					F3FA28CA241FEE5B00EB7536 = {
@@ -145,6 +194,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3FA29032420176800EB7536 /* PreferencesWindow.swift in Sources */,
+				F3FA28E2241FF9C700EB7536 /* DesktopsManager.swift in Sources */,
+				F3416A39244A99710023C01D /* DesktopMenuItem.swift in Sources */,
+				F37E9CA1245F7BA200BC82F3 /* DataManager.swift in Sources */,
+				F3FA290524201AB000EB7536 /* DesktopView.swift in Sources */,
 				F3FA28D1241FEE5B00EB7536 /* ContentView.swift in Sources */,
 				F3FA28CF241FEE5B00EB7536 /* AppDelegate.swift in Sources */,
 			);
@@ -170,7 +224,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -230,7 +284,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -282,6 +336,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Desktopify/Desktopify.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Desktopify/Preview Content\"";
@@ -305,6 +360,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Desktopify/Desktopify.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Desktopify/Preview Content\"";
