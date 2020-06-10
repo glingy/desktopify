@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="Permissions">
+            <connections>
+                <outlet property="button" destination="lMC-rg-Icq" id="N0k-Y3-4y1"/>
+                <outlet property="statusLabel" destination="MWE-Ts-04i" id="8Uw-Xt-jVL"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="sb9-vc-Km1"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Welcome!" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="497" height="404"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="497" height="404"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" preferredMaxLayoutWidth="243" translatesAutoresizingMaskIntoConstraints="NO" id="MWE-Ts-04i">
+                        <rect key="frame" x="57" y="41" width="247" height="16"/>
+                        <textFieldCell key="cell" title="Please open your Desktop folder:" id="jEe-8G-eWV">
+                            <font key="font" metaFont="label" size="13"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lMC-rg-Icq">
+                        <rect key="frame" x="329" y="31" width="127" height="32"/>
+                        <buttonCell key="cell" type="push" title="Open Desktop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0Tf-bH-U5I">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="label" size="13"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="nextButton:" target="-2" id="cUr-vd-4zL"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="TGC-o2-915">
+                        <rect key="frame" x="57" y="95" width="384" height="272"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="272" id="TAB-qr-o7e"/>
+                            <constraint firstAttribute="width" constant="380" id="toS-c6-QRJ"/>
+                        </constraints>
+                        <textFieldCell key="cell" selectable="YES" id="VPJ-AU-eEv">
+                            <font key="font" metaFont="label" size="13"/>
+                            <mutableString key="title">Welcome to Desktopify!
+
+This app works by replacing your Desktop folder with a link that is directed to a different folderbased on your selection in the menu bar.
+
+You will be prompted to:
+ 1) choose a folder in which to save desktops (any existing folders will be treated as existing desktops and show up in the menu bar)
+ 2) install a helper which will move your current Desktop folder and remove the empty folder macOS replaces the link with each restart, and
+ 3) optionally allow accessibility access so this application can respond to keyboard shortcuts when it is not focused (without this, the app will work normally, but will not respond to keyboard shortcuts unless the app is focused.</mutableString>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="MWE-Ts-04i" firstAttribute="centerY" secondItem="EiT-Mj-1SZ" secondAttribute="centerY" constant="153" id="0zc-B6-KzH"/>
+                    <constraint firstItem="TGC-o2-915" firstAttribute="centerY" secondItem="EiT-Mj-1SZ" secondAttribute="centerY" constant="-29" id="2n2-BL-EEF"/>
+                    <constraint firstAttribute="bottom" secondItem="lMC-rg-Icq" secondAttribute="bottom" constant="38" id="39K-fh-q79"/>
+                    <constraint firstItem="TGC-o2-915" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="AbC-EQ-hTa"/>
+                    <constraint firstAttribute="trailing" secondItem="MWE-Ts-04i" secondAttribute="trailing" constant="195" id="CWV-Rq-vg4"/>
+                    <constraint firstAttribute="trailing" secondItem="lMC-rg-Icq" secondAttribute="trailing" constant="47" id="SGp-9z-bD8"/>
+                    <constraint firstItem="MWE-Ts-04i" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="59" id="Yyv-0X-eCj"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="-71.5" y="197"/>
+        </window>
+    </objects>
+</document>

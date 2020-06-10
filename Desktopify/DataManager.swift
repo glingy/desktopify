@@ -11,6 +11,8 @@ import Foundation
 struct CONFIG {
     static let KEYS = "config_keys"        // key 0 is none
     static let DESKTOPS = "config_desktops"
+    static let DESKTOP_BOOKMARK = "config_desktop_bookmark"
+    static let DESKTOPS_BOOKMARK = "config_desktops_bookmark"
 }
 
 class DataManager {
@@ -116,5 +118,21 @@ class DataManager {
         desktops = newD
         keys = newK
         save()
+    }
+    
+    func getDesktopBookmark() -> Data? {
+        return UserDefaults.standard.data(forKey: CONFIG.DESKTOP_BOOKMARK)
+    }
+    
+    func saveDesktopBookmark(_ data: Data) {
+        UserDefaults.standard.set(data, forKey: CONFIG.DESKTOP_BOOKMARK)
+    }
+    
+    func getDesktopsBookmark() -> Data? {
+        return UserDefaults.standard.data(forKey: CONFIG.DESKTOPS_BOOKMARK)
+    }
+    
+    func saveDesktopsBookmark(_ data: Data) {
+        UserDefaults.standard.set(data, forKey: CONFIG.DESKTOPS_BOOKMARK)
     }
 }

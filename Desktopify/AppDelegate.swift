@@ -25,7 +25,75 @@ let KEY_MAP : [Int : unichar] = [
 ]
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, PermissionsDelegate {
+    func permissionsError(_ msg: Error) {
+        print(msg)
+        exit(0)
+    }
+    
+    func permissionsSuccess() {
+        if let button = statusItem.button {
+              button.image = NSImage(named:NSImage.Name("FolderIcon"))
+            }
+            
+            constructMenu()
+            NSEvent.addGlobalMonitorForEvents(matching: .keyDown, handler: {
+                (event) in
+                if (DataManager.ALLOWED_KEYS.contains(Int(event.keyCode))) {
+                    guard let id = DataManager.shared.getId(fromKey: Int(event.keyCode)) else { return }
+                    
+                    DesktopsManager.shared.swapTo(id)
+                }
+            })
+            
+            do {
+                try DesktopsManager.shared.forceRemoveDesktopIfNeeded()
+            } catch {
+                print("Desktop Not Empty!")
+                exit(1)
+            }
+        }
+
+        func applicationWillTerminate(_ aNotification: Notification) {
+            // Insert code here to tear down your application
+        }
+        
+        func constructMenu() {
+            let menu = NSMenu()
+            menu.addItem(NSMenuItem(title: "Desktops", action: nil, keyEquivalent: ""))
+            menu.addItem(NSMenuItem.separator())
+            DesktopsManager.shared.getDesktops()?.forEach({ (desktop) in
+                let item = NSMenuItem(title: desktop.name, action: #selector(swapTo(_:)), keyEquivalent: KEY_MAP[desktop.key] != nil ? String(utf16CodeUnits: [KEY_MAP[desktop.key]!], count: 1) : "")
+                item.keyEquivalentModifierMask = .init()
+                item.representedObject = desktop.id
+                menu.addItem(item)
+            })
+            menu.addItem(NSMenuItem.separator())
+            menu.addItem(NSMenuItem(title: "Preferences", action: #selector(showPreferences(_:)), keyEquivalent: ","))
+            menu.addItem(NSMenuItem.separator())
+            menu.addItem(NSMenuItem(title: "Quit Desktopify", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+
+          statusItem.menu = menu
+        }
+        
+        @objc func swapTo(_ sender: Any?) {
+            guard let id = (sender as? NSMenuItem)?.representedObject as? Int else { return }
+            
+            DesktopsManager.shared.swapTo(id)
+        }
+        
+        @objc func showPreferences(_ sender: Any?) {
+            if (window == nil) {
+                window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 640, height: 480), styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView], backing: .buffered, defer: false)
+                window!.isReleasedWhenClosed = false
+                window!.setFrameAutosaveName("AutoSave Name helps")
+                window!.center()
+                window!.contentView = NSHostingView(rootView: ContentView(desktops: DesktopsManager.shared.getDesktops()!))
+            }
+            NSApp.activate(ignoringOtherApps: true)
+            window!.makeKeyAndOrderFront(nil)
+    }
+    
     
     
 
@@ -34,71 +102,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        if let button = statusItem.button {
-          button.image = NSImage(named:NSImage.Name("FolderIcon"))
-        }
-        
-        constructMenu()
-        if (!AXIsProcessTrusted()) {
-          let opts : [AnyHashable: Any] = [
-              kAXTrustedCheckOptionPrompt.takeRetainedValue():   true
-          ]
-          print(AXIsProcessTrustedWithOptions(opts as CFDictionary))
-        }
-        NSEvent.addGlobalMonitorForEvents(matching: .keyDown, handler: {
-            (event) in
-            if (DataManager.ALLOWED_KEYS.contains(Int(event.keyCode))) {
-                guard let id = DataManager.shared.getId(fromKey: Int(event.keyCode)) else { return }
-                
-                DesktopsManager.shared.swapTo(id)
-            }
-        })
-        
-        do {
-            try DesktopsManager.shared.forceRemoveDesktopIfNeeded()
-        } catch {
-            print("Desktop Not Empty!")
-            exit(1)
-        }
-    }
-
-    func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
-    }
-    
-    func constructMenu() {
-        let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Desktops", action: nil, keyEquivalent: ""))
-        menu.addItem(NSMenuItem.separator())
-        DesktopsManager.shared.getDesktops()?.forEach({ (desktop) in
-            let item = NSMenuItem(title: desktop.name, action: #selector(swapTo(_:)), keyEquivalent: KEY_MAP[desktop.key] != nil ? String(utf16CodeUnits: [KEY_MAP[desktop.key]!], count: 1) : "")
-            item.keyEquivalentModifierMask = .init()
-            item.representedObject = desktop.id
-            menu.addItem(item)
-        })
-        menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Preferences", action: #selector(showPreferences(_:)), keyEquivalent: ","))
-        menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit Desktopify", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
-
-      statusItem.menu = menu
-    }
-    
-    @objc func swapTo(_ sender: Any?) {
-        guard let id = (sender as? NSMenuItem)?.representedObject as? Int else { return }
-        
-        DesktopsManager.shared.swapTo(id)
-    }
-    
-    @objc func showPreferences(_ sender: Any?) {
-        if (window == nil) {
-            window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 640, height: 480), styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView], backing: .buffered, defer: false)
-            window!.isReleasedWhenClosed = false
-            window!.setFrameAutosaveName("AutoSave Name helps")
-            window!.center()
-            window!.contentView = NSHostingView(rootView: ContentView(desktops: DesktopsManager.shared.getDesktops()!))
-        }
-        NSApp.activate(ignoringOtherApps: true)
-        window!.makeKeyAndOrderFront(nil)
+        Permissions.attempt(self)
     }
 }

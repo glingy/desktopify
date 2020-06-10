@@ -41,8 +41,20 @@ class Desktop : ObservableObject {
 
 class DesktopsManager {
     static let shared = DesktopsManager()
-    let desktopsDir = URL(fileURLWithPath: "Desktops", relativeTo: FileManager.default.homeDirectoryForCurrentUser)
+    let desktopsDir: URL
     var cached : [Desktop]?
+    
+    init() {
+        do {
+            var isStale: Bool = false
+            desktopsDir = try URL(resolvingBookmarkData: Permissions.getDesktopsBookmark()!, bookmarkDataIsStale: &isStale)
+            print(isStale)
+            print(desktopsDir)
+        } catch {
+            print(error)
+            desktopsDir = FileManager.default.homeDirectoryForCurrentUser
+        }
+    }
     
     func getDesktops() -> [Desktop]? {
         if (cached != nil) {
@@ -85,8 +97,13 @@ class DesktopsManager {
     
     func getDesktop() -> URL? {
         do {
-            return try FileManager.default.url(for: .desktopDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+            var isStale: Bool = false
+            let url = try URL(resolvingBookmarkData: Permissions.getDesktopBookmark()!, bookmarkDataIsStale: &isStale)
+            print(url)
+            print(isStale)
+            return url
         } catch {
+            print("ERROR getting desktop")
             print(error)
             return nil
         }
@@ -96,10 +113,14 @@ class DesktopsManager {
         guard let desktop = getDesktop() else { return false }
         
         do {
+            print("Should I remove?")
             if (try desktop.resourceValues(forKeys: [.isAliasFileKey]).isAliasFile ?? false) {
+                print("Yep")
                 try FileManager.default.removeItem(at: desktop)
+                print("Should be gone!")
                 return true
             }
+            print("Nope")
         } catch CocoaError.fileReadNoSuchFile {
             return true
         } catch {
@@ -143,13 +164,5 @@ class DesktopsManager {
                 print(error)
             }
         }
-    }
-    
-    func forceRemoveDesktopIfNeeded() throws {
-        let content = UNMutableNotificationContent()
-        content.title = "Error Starting Desktopify!"
-        content.body = "Please manually remove the desktop folder."
-        
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil), withCompletionHandler: nil)
     }
 }

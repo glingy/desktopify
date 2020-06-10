@@ -8,6 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		F3416A39244A99710023C01D /* DesktopMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3416A38244A99710023C01D /* DesktopMenuItem.swift */; };
+		F34F6619248F1825006922ED /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F6618248F1825006922ED /* main.swift */; };
+		F34F661E248F1F39006922ED /* InfoPane.xib in Resources */ = {isa = PBXBuildFile; fileRef = F34F661D248F1F39006922ED /* InfoPane.xib */; };
+		F34F6620248F2062006922ED /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F661F248F2062006922ED /* Permissions.swift */; };
+		F34F6627248FF08F006922ED /* turtlmkr.desktopify.helper in CopyFiles */ = {isa = PBXBuildFile; fileRef = F34F6616248F1825006922ED /* turtlmkr.desktopify.helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		F34F662B24908046006922ED /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F662A24908046006922ED /* Helper.swift */; };
+		F34F663224908385006922ED /* HelperXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F662E2490821C006922ED /* HelperXPCProtocol.swift */; };
+		F34F663324908388006922ED /* HelperXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F662E2490821C006922ED /* HelperXPCProtocol.swift */; };
+		F34F6635249147F8006922ED /* CodesignCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F6634249147F8006922ED /* CodesignCheck.swift */; };
 		F37E9CA1245F7BA200BC82F3 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37E9CA0245F7BA200BC82F3 /* DataManager.swift */; };
 		F3FA28CF241FEE5B00EB7536 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FA28CE241FEE5B00EB7536 /* AppDelegate.swift */; };
 		F3FA28D1241FEE5B00EB7536 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FA28D0241FEE5B00EB7536 /* ContentView.swift */; };
@@ -18,6 +26,16 @@
 		F3FA29032420176800EB7536 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FA29022420176800EB7536 /* PreferencesWindow.swift */; };
 		F3FA290524201AB000EB7536 /* DesktopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FA290424201AB000EB7536 /* DesktopView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F34F6623248FF050006922ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3FA28C3241FEE5B00EB7536 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F34F6615248F1825006922ED;
+			remoteInfo = Helper;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		F3416A34244A63AD0023C01D /* Embed XPC Services */ = {
@@ -30,13 +48,40 @@
 			name = "Embed XPC Services";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F34F6614248F1825006922ED /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		F34F6626248FF074006922ED /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchServices;
+			dstSubfolderSpec = 1;
+			files = (
+				F34F6627248FF08F006922ED /* turtlmkr.desktopify.helper in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		F3416A38244A99710023C01D /* DesktopMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopMenuItem.swift; sourceTree = "<group>"; };
+		F34F6616248F1825006922ED /* turtlmkr.desktopify.helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = turtlmkr.desktopify.helper; sourceTree = BUILT_PRODUCTS_DIR; };
+		F34F6618248F1825006922ED /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		F34F661D248F1F39006922ED /* InfoPane.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InfoPane.xib; sourceTree = "<group>"; };
+		F34F661F248F2062006922ED /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
+		F34F6621248FEEDF006922ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F34F6622248FEF6E006922ED /* Launchd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Launchd.plist; sourceTree = "<group>"; };
+		F34F662824906D6E006922ED /* SMJobBlessUtil.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = SMJobBlessUtil.py; sourceTree = "<group>"; };
+		F34F662A24908046006922ED /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		F34F662E2490821C006922ED /* HelperXPCProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperXPCProtocol.swift; sourceTree = "<group>"; };
+		F34F6634249147F8006922ED /* CodesignCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodesignCheck.swift; sourceTree = "<group>"; };
 		F37E9CA0245F7BA200BC82F3 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		F3931E56245FB5400020B453 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		F3931E5E245FB5860020B453 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F3FA28CB241FEE5B00EB7536 /* Desktopify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Desktopify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3FA28CE241FEE5B00EB7536 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F3FA28D0241FEE5B00EB7536 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -51,6 +96,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		F34F6613248F1825006922ED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3FA28C8241FEE5B00EB7536 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -61,28 +113,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F3931E4D245FB48C0020B453 /* desktopBeGone */ = {
+		F34F6617248F1825006922ED /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				F3931E56245FB5400020B453 /* main.cpp */,
+				F34F6634249147F8006922ED /* CodesignCheck.swift */,
+				F34F6618248F1825006922ED /* main.swift */,
+				F34F6621248FEEDF006922ED /* Info.plist */,
+				F34F6622248FEF6E006922ED /* Launchd.plist */,
 			);
-			path = desktopBeGone;
+			path = Helper;
 			sourceTree = "<group>";
 		};
-		F3931E5D245FB5860020B453 /* desktopRemover */ = {
+		F34F662924908033006922ED /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				F3931E5E245FB5860020B453 /* main.cpp */,
+				F34F662A24908046006922ED /* Helper.swift */,
 			);
-			path = desktopRemover;
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		F34F66302490829B006922ED /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				F34F662E2490821C006922ED /* HelperXPCProtocol.swift */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 		F3FA28C2241FEE5B00EB7536 = {
 			isa = PBXGroup;
 			children = (
+				F34F66302490829B006922ED /* Common */,
+				F34F662824906D6E006922ED /* SMJobBlessUtil.py */,
 				F3FA28CD241FEE5B00EB7536 /* Desktopify */,
-				F3931E4D245FB48C0020B453 /* desktopBeGone */,
-				F3931E5D245FB5860020B453 /* desktopRemover */,
+				F34F6617248F1825006922ED /* Helper */,
 				F3FA28CC241FEE5B00EB7536 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -91,6 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				F3FA28CB241FEE5B00EB7536 /* Desktopify.app */,
+				F34F6616248F1825006922ED /* turtlmkr.desktopify.helper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -98,6 +163,7 @@
 		F3FA28CD241FEE5B00EB7536 /* Desktopify */ = {
 			isa = PBXGroup;
 			children = (
+				F34F662924908033006922ED /* Helper */,
 				F3FA28CE241FEE5B00EB7536 /* AppDelegate.swift */,
 				F37E9CA0245F7BA200BC82F3 /* DataManager.swift */,
 				F3FA28E1241FF9C700EB7536 /* DesktopsManager.swift */,
@@ -105,6 +171,8 @@
 				F3FA29022420176800EB7536 /* PreferencesWindow.swift */,
 				F3FA28D0241FEE5B00EB7536 /* ContentView.swift */,
 				F3FA290424201AB000EB7536 /* DesktopView.swift */,
+				F34F661D248F1F39006922ED /* InfoPane.xib */,
+				F34F661F248F2062006922ED /* Permissions.swift */,
 				F3FA28D2241FEE5E00EB7536 /* Assets.xcassets */,
 				F3FA28D7241FEE5E00EB7536 /* Main.storyboard */,
 				F3FA28DA241FEE5E00EB7536 /* Info.plist */,
@@ -125,6 +193,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		F34F6615248F1825006922ED /* Helper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F34F661A248F1825006922ED /* Build configuration list for PBXNativeTarget "Helper" */;
+			buildPhases = (
+				F34F6612248F1825006922ED /* Sources */,
+				F34F6613248F1825006922ED /* Frameworks */,
+				F34F6614248F1825006922ED /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Helper;
+			productName = Helper;
+			productReference = F34F6616248F1825006922ED /* turtlmkr.desktopify.helper */;
+			productType = "com.apple.product-type.tool";
+		};
 		F3FA28CA241FEE5B00EB7536 /* Desktopify */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F3FA28DE241FEE5E00EB7536 /* Build configuration list for PBXNativeTarget "Desktopify" */;
@@ -133,10 +218,12 @@
 				F3FA28C8241FEE5B00EB7536 /* Frameworks */,
 				F3FA28C9241FEE5B00EB7536 /* Resources */,
 				F3416A34244A63AD0023C01D /* Embed XPC Services */,
+				F34F6626248FF074006922ED /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F34F6624248FF050006922ED /* PBXTargetDependency */,
 			);
 			name = Desktopify;
 			productName = Desktopify;
@@ -149,10 +236,13 @@
 		F3FA28C3241FEE5B00EB7536 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1140;
-				LastUpgradeCheck = 1140;
+				LastSwiftUpdateCheck = 1150;
+				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = "Gregory Ling";
 				TargetAttributes = {
+					F34F6615248F1825006922ED = {
+						CreatedOnToolsVersion = 11.5;
+					};
 					F3FA28CA241FEE5B00EB7536 = {
 						CreatedOnToolsVersion = 11.3.1;
 					};
@@ -172,6 +262,7 @@
 			projectRoot = "";
 			targets = (
 				F3FA28CA241FEE5B00EB7536 /* Desktopify */,
+				F34F6615248F1825006922ED /* Helper */,
 			);
 		};
 /* End PBXProject section */
@@ -182,6 +273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3FA28D9241FEE5E00EB7536 /* Main.storyboard in Resources */,
+				F34F661E248F1F39006922ED /* InfoPane.xib in Resources */,
 				F3FA28D6241FEE5E00EB7536 /* Preview Assets.xcassets in Resources */,
 				F3FA28D3241FEE5E00EB7536 /* Assets.xcassets in Resources */,
 			);
@@ -190,21 +282,42 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F34F6612248F1825006922ED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F34F663224908385006922ED /* HelperXPCProtocol.swift in Sources */,
+				F34F6635249147F8006922ED /* CodesignCheck.swift in Sources */,
+				F34F6619248F1825006922ED /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3FA28C7241FEE5B00EB7536 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F34F663324908388006922ED /* HelperXPCProtocol.swift in Sources */,
 				F3FA29032420176800EB7536 /* PreferencesWindow.swift in Sources */,
 				F3FA28E2241FF9C700EB7536 /* DesktopsManager.swift in Sources */,
 				F3416A39244A99710023C01D /* DesktopMenuItem.swift in Sources */,
 				F37E9CA1245F7BA200BC82F3 /* DataManager.swift in Sources */,
 				F3FA290524201AB000EB7536 /* DesktopView.swift in Sources */,
+				F34F662B24908046006922ED /* Helper.swift in Sources */,
+				F34F6620248F2062006922ED /* Permissions.swift in Sources */,
 				F3FA28D1241FEE5B00EB7536 /* ContentView.swift in Sources */,
 				F3FA28CF241FEE5B00EB7536 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F34F6624248FF050006922ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F34F6615248F1825006922ED /* Helper */;
+			targetProxy = F34F6623248FF050006922ED /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		F3FA28D7241FEE5E00EB7536 /* Main.storyboard */ = {
@@ -218,6 +331,52 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		F34F661B248F1825006922ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2HV2XN5TR4;
+				INFOPLIST_FILE = "$(SRCROOT)/Helper/Info.plist";
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					Helper/Info.plist,
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					Helper/Launchd.plist,
+				);
+				PRODUCT_NAME = turtlmkr.desktopify.helper;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F34F661C248F1825006922ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2HV2XN5TR4;
+				INFOPLIST_FILE = "$(SRCROOT)/Helper/Info.plist";
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					Helper/Info.plist,
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					Helper/Launchd.plist,
+				);
+				PRODUCT_NAME = turtlmkr.desktopify.helper;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		F3FA28DC241FEE5E00EB7536 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -336,7 +495,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Desktopify/Desktopify.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Desktopify/Preview Content\"";
@@ -349,7 +508,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = ling.gregory.Desktopify;
+				PRODUCT_BUNDLE_IDENTIFIER = turtlmkr.desktopify;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -360,7 +519,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Desktopify/Desktopify.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Desktopify/Preview Content\"";
@@ -373,7 +532,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = ling.gregory.Desktopify;
+				PRODUCT_BUNDLE_IDENTIFIER = turtlmkr.desktopify;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -382,6 +541,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F34F661A248F1825006922ED /* Build configuration list for PBXNativeTarget "Helper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F34F661B248F1825006922ED /* Debug */,
+				F34F661C248F1825006922ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F3FA28C6241FEE5B00EB7536 /* Build configuration list for PBXProject "Desktopify" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
