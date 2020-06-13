@@ -8,161 +8,221 @@
 
 import Cocoa
 import UserNotifications
-
-enum DesktopError: Error {
-    case DesktopNotEmptyError
-}
-
-class Desktop : ObservableObject {
-    let id: Int
-    var name : String {
-        get {
-            return DataManager.shared.getDesktop(byId: id)
-        }
-    }
-    
-    @Published var key: Int {
-        didSet {
-            if (oldValue != key) {
-                if (key != 0 && DataManager.shared.hasKey(key) && DataManager.shared.getKey(byId: id) != key) {
-                    key = oldValue
-                } else {
-                    DataManager.shared.setKey(forId: id, toKey: key)
-                }
-            }
-        }
-    }
-    
-    init(id: Int) {
-        self.id = id
-        self.key = DataManager.shared.getKey(byId: id)
-    }
-}
+import CoreServices
 
 class DesktopsManager {
-    static let shared = DesktopsManager()
-    let desktopsDir: URL
-    var cached : [Desktop]?
+    public var desktopsURL: URL
+    private let desktopURL: URL
+    private(set) public var desktops : [Desktop] = []
+    private var fsEventStream : FSEventStreamRef?
+    private(set) public static var shared: DesktopsManager?
+    private(set) public var currentDesktop: Desktop?
     
-    init() {
-        do {
-            var isStale: Bool = false
-            desktopsDir = try URL(resolvingBookmarkData: Permissions.getDesktopsBookmark()!, bookmarkDataIsStale: &isStale)
-            print(isStale)
-            print(desktopsDir)
-        } catch {
-            print(error)
-            desktopsDir = FileManager.default.homeDirectoryForCurrentUser
+    func addDesktop(_ name: String) {
+        let index = desktops.firstIndex { (a) -> Bool in
+            a.name > name
         }
+        desktops.insert(Desktop(name), at: index ?? desktops.count)
+        DesktopMenuItem.shared?.updateDesktopsList()
+        // update preferences window
     }
     
-    func getDesktops() -> [Desktop]? {
-        if (cached != nil) {
-            return cached
-        }
+    func removeDesktop(_ name: String) {
+        guard let index = desktops.firstIndex(where: { (a) -> Bool in
+            a.name == name
+        }) else { return }
+        desktops.remove(at: index)
+        DesktopMenuItem.shared?.updateDesktopsList()
+        // update preferences window
+    }
+    
+    init(_ desktopURL: URL) {
+        self.desktopURL = desktopURL
+        desktopsURL = DataManager.shared.getDesktopsURL()!
+        DesktopsManager.shared = self
         
+        // Load desktops from the desktops folder and cached keybindings:
+        loadDesktopsFromFolder()
+        startFileWatcher()
+        swapTo(desktops[0])
+    }
+    
+    func loadDesktopsFromFolder() {
         do {
-            var desktops = [Desktop]()
-            var absent: [String] = DataManager.shared.getAllDesktops()
-            
-            let contents = try FileManager.default.contentsOfDirectory(at: desktopsDir, includingPropertiesForKeys: [.customIconKey, .isDirectoryKey], options: [.includesDirectoriesPostOrder, .skipsHiddenFiles, .skipsPackageDescendants, .skipsSubdirectoryDescendants])
+            desktops = []
+            let contents = try FileManager.default.contentsOfDirectory(at: desktopsURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.includesDirectoriesPostOrder, .skipsHiddenFiles, .skipsPackageDescendants, .skipsSubdirectoryDescendants])
             
             try contents.forEach { (desktop) in
                 if (try desktop.resourceValues(forKeys: [.isDirectoryKey]).isDirectory ?? false) {
-                    if (!DataManager.shared.hasDesktop(desktop.lastPathComponent)) {
-                        DataManager.shared.addDesktop(named: desktop.lastPathComponent)
-                    } else {
-                        absent.remove(at: absent.firstIndex(of: desktop.lastPathComponent)!)
-                    }
+                    desktops.append(Desktop(desktop.lastPathComponent))
                 }
             }
             
-            for absentee in absent {
-                DataManager.shared.removeDesktop(byName: absentee)
+            desktops.sort { (a, b) -> Bool in
+                a.name < b.name // better sorting criteria?
             }
-            
-            for i in (0..<DataManager.shared.count()) {
-                desktops.append(Desktop(id: i))
-            }
-            
-            DataManager.shared.sort()
 
-            return desktops
         } catch {
             print("Error!")
             print(error)
         }
-        return nil
     }
     
-    func getDesktop() -> URL? {
-        do {
-            var isStale: Bool = false
-            let url = try URL(resolvingBookmarkData: Permissions.getDesktopBookmark()!, bookmarkDataIsStale: &isStale)
-            print(url)
-            print(isStale)
-            return url
-        } catch {
-            print("ERROR getting desktop")
-            print(error)
-            return nil
-        }
-    }
-    
-    func removeDesktop() -> Bool {
-        guard let desktop = getDesktop() else { return false }
+    func fileWatcherFolderChanged(_ streamRef: ConstFSEventStreamRef, _ clientCallbackInfo: UnsafeMutableRawPointer?, _ numEvents: Int, _ eventPaths: UnsafeMutableRawPointer, _ eventFlags: UnsafePointer<FSEventStreamEventFlags>, _ eventIds: UnsafePointer<FSEventStreamEventId>) {
+        //print("File changed!!!")
+        let paths = unsafeBitCast(eventPaths, to: NSArray.self) as! [String]
         
-        do {
-            print("Should I remove?")
-            if (try desktop.resourceValues(forKeys: [.isAliasFileKey]).isAliasFile ?? false) {
-                print("Yep")
-                try FileManager.default.removeItem(at: desktop)
-                print("Should be gone!")
-                return true
-            }
-            print("Nope")
-        } catch CocoaError.fileReadNoSuchFile {
-            return true
-        } catch {
-            print(error)
-        }
-        return false
-    }
-    
-    func shouldForceRemoveDesktop() throws -> Bool  {
-        guard let desktop = getDesktop() else { return false }
+        var lastRenamed = false
         
-        // if it's an alias, we can remove it later, so no need to request sudo
-        do {
-            if (try desktop.resourceValues(forKeys: [.isAliasFileKey]).isAliasFile ?? false) {
-                return false
-            } else {
-                // Now we know it's a folder. Is it empty except for .localized and .DS_Store?
-                if (try FileManager.default.contentsOfDirectory(atPath: desktop.absoluteString).first(where: { (name) -> Bool in
-                    name != ".localized" && name != ".DS_Store"
-                }) != nil) {
-                    // If there's a file, then we shouldn't remove it, but throw an error to exit the program.
-                    throw DesktopError.DesktopNotEmptyError
+        for i in 0 ..< numEvents {
+            if lastRenamed {
+                lastRenamed = false
+                print(eventIds[i])
+                print("Unknown:")
+                print(paths[i])
+            } // rename! - file renamed and file exists at renamed location?
+            
+            if (URL(fileURLWithPath: paths[i]).deletingLastPathComponent() == desktopsURL && eventFlags[i] & UInt32(kFSEventStreamEventFlagItemIsDir) != 0) {
+                
+                //print("Could be me!")
+                //print(paths[i])
+                //print(eventFlags[i])
+                //print(eventIds[i])
+                if (eventFlags[i] & UInt32(kFSEventStreamEventFlagItemRemoved) != 0) {
+                    print("Removed: \(URL(fileURLWithPath: paths[i]).lastPathComponent)")
+                    removeDesktop(URL(fileURLWithPath: paths[i]).lastPathComponent)
+                } else if (eventFlags[i] & UInt32(kFSEventStreamEventFlagItemRenamed) != 0) {
+                    print("Renamed: \(URL(fileURLWithPath: paths[i]).lastPathComponent)")
+                    if (Util.folderExists(URL(fileURLWithPath: paths[i]))) {
+                        addDesktop(URL(fileURLWithPath: paths[i]).lastPathComponent)
+                    } else {
+                        removeDesktop(URL(fileURLWithPath: paths[i]).lastPathComponent)
+                    }
+                } else if (eventFlags[i] & UInt32(kFSEventStreamEventFlagItemCreated) != 0) {
+                    print("Created: \(URL(fileURLWithPath: paths[i]).lastPathComponent)")
+                    addDesktop(URL(fileURLWithPath: paths[i]).lastPathComponent)
                 }
-                return true
+                //determine(eventFlags[i])
             }
-        } catch CocoaError.fileReadNoSuchFile { // if it doesn't exist, we're good
-            return false
-        } catch CocoaError.fileNoSuchFile { // if it doesn't exist, we're good
-            return false
-        } catch {
-            print(error)
-            throw DesktopError.DesktopNotEmptyError
         }
     }
     
-    func swapTo(_ id: Int) {
-        if (removeDesktop()) {
+    func startFileWatcher() {
+
+        let eventStream = FSEventStreamCreate(nil, {
+            DesktopsManager.shared?.fileWatcherFolderChanged($0, $1, $2, $3, $4, $5)
+        }, nil, Array(arrayLiteral: desktopsURL.path) as CFArray, FSEventStreamEventId(kFSEventStreamEventIdSinceNow), CFTimeInterval(0.5), FSEventStreamCreateFlags(kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagFileEvents))
+        
+        if (eventStream == nil) {
+            print("Error! EventStream is nil!")
+            return
+        }
+        
+        FSEventStreamScheduleWithRunLoop(eventStream!, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        FSEventStreamStart(eventStream!)
+    }
+    
+    func swapTo(_ desktop: Desktop) {
+        currentDesktop?.setActive(false)
+        currentDesktop = desktop
+        desktop.setActive(true)        
+        
+        if (Util.folderExists(desktopURL) && !Util.isAlias(desktopURL)) {
+            print("ERROR! A DESKTOP FOLDER SHOULD NOT EXIST!")
+            return
+        }
+        
+        do {
+            if FileManager.default.fileExists(atPath: desktopURL.path) {
+                if Util.isAlias(desktopURL) {
+                
+                    try FileManager.default.removeItem(at: desktopURL)
+                
+                } else {
+                    print("Error! A Desktop something exists and it's not a folder nor an alias! I'm confused.")
+                    return
+                }
+            }
+        
+        // then make the new link
+            try FileManager.default.createSymbolicLink(at: desktopURL, withDestinationURL:URL(fileURLWithPath: desktop.name, relativeTo: desktopsURL))
+        } catch {
+            print(error)
+        }
+    }
+    
+    
+    public static func prepareDesktopFolder(_ desktopURL: URL) {
+        if (Util.folderExists(desktopURL) && !Util.isAlias(desktopURL)) {
+            
+            // make sure we have permission to delete it...
             do {
-                try FileManager.default.createSymbolicLink(at: getDesktop()!, withDestinationURL: URL(fileURLWithPath: DataManager.shared.getDesktop(byId: id), relativeTo: desktopsDir))
+                try Process.run(URL(fileURLWithPath: "/bin/chmod"), arguments: ["-a", "everyone deny delete", desktopURL.path]) { process in
+                //print(process)
+                }
+            } catch {
+                print(error)
+            }
+            
+            // check for files we'd be destroying...
+            // TODO: we need a menu to relocate files... for now if it's empty it'll do
+            
+            do {
+                var isEmpty = true
+                let contents = try FileManager.default.contentsOfDirectory(atPath: desktopURL.path)
+                for item in contents {
+                    if (item != ".DS_Store") {
+                        isEmpty = false
+                        break
+                    }
+                }
+                
+                if isEmpty {
+                    deleteDesktopFolder(desktopURL)
+                } else {
+                    print("Not empty! Found some files: \(contents)")
+                }
             } catch {
                 print(error)
             }
         }
     }
+    
+    private static func deleteDesktopFolder(_ desktopURL: URL) {
+        do {
+            try FileManager.default.removeItem(at: desktopURL)
+        } catch {
+            print(error)
+        }
+    }
 }
+
+
+
+/*func determine(_ flags: FSEventStreamEventFlags) {
+    var outStr = ""
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagNone)) > 0 ? "kFSEventStreamEventFlagNone\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagMount)) > 0 ? "kFSEventStreamEventFlagMount\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagUnmount)) > 0 ? "kFSEventStreamEventFlagUnmount\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagOwnEvent)) > 0 ? "kFSEventStreamEventFlagOwnEvent\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemIsFile)) > 0 ? "kFSEventStreamEventFlagItemIsFile\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemIsDir)) > 0 ? "kFSEventStreamEventFlagItemIsDir\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemChangeOwner)) > 0 ? "kFSEventStreamEventFlagItemChangeOwner\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemCreated)) > 0 ? "kFSEventStreamEventFlagItemCreated\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemRemoved)) > 0 ? "kFSEventStreamEventFlagItemRemoved\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemRenamed)) > 0 ? "kFSEventStreamEventFlagItemRenamed\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemModified)) > 0 ? "kFSEventStreamEventFlagItemModified\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemXattrMod)) > 0 ? "kFSEventStreamEventFlagItemXattrMod\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemIsSymlink)) > 0 ? "kFSEventStreamEventFlagItemIsSymlink\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemIsHardlink)) > 0 ? "kFSEventStreamEventFlagItemIsHardlink\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemIsLastHardlink)) > 0 ? "kFSEventStreamEventFlagItemIsLastHardlink\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemInodeMetaMod)) > 0 ? "kFSEventStreamEventFlagItemInodeMetaMod\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagItemFinderInfoMod)) > 0 ? "kFSEventStreamEventFlagItemFinderInfoMod\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagHistoryDone)) > 0 ? "kFSEventStreamEventFlagHistoryDone\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagRootChanged)) > 0 ? "kFSEventStreamEventFlagRootChanged\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagMustScanSubDirs)) > 0 ? "kFSEventStreamEventFlagMustScanSubDirs\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagUserDropped)) > 0 ? "kFSEventStreamEventFlagUserDropped\n" : "")
+    outStr += ((flags & FSEventStreamEventFlags(kFSEventStreamEventFlagKernelDropped)) > 0 ? "kFSEventStreamEventFlagKernelDropped\n" : "")
+    print(outStr)
+}
+*/

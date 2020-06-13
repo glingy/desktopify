@@ -10,16 +10,15 @@ import Cocoa
 import ServiceManagement
 
 protocol PermissionsDelegate {
-    func permissionsError(_ msg: Error)
-    func permissionsSuccess()
+    func permissionsComplete()
 }
 
 class Permissions {
     private enum Status {
-        case DESKTOPS, HELPER, KEYINPUT, SUCCESS;
+        case DESKTOP, DESKTOPS, HELPER, KEYINPUT, SUCCESS;
         var label: String {
             switch self {
-                //case .DESKTOP: return "Please open your Desktop folder:"
+                case .DESKTOP: return "Please open your Desktop folder:"
                 case .DESKTOPS: return "Please select the folder in which to put the desktops:"
                 case .HELPER: return "Please accept the helper:"
                 case .KEYINPUT: return "(Optional) Give keyboard access for global shortcuts:"
@@ -28,7 +27,7 @@ class Permissions {
         }
         var button: String {
             switch self {
-                //case .DESKTOP: return "Open Desktop"
+                case .DESKTOP: return "Open Desktop"
                 case .DESKTOPS: return "Open Desktops"
                 case .HELPER: return "Install Helper"
                 case .KEYINPUT: return "Next"
@@ -51,18 +50,12 @@ class Permissions {
     @IBOutlet weak var button: NSButton!
     @IBOutlet weak var statusLabel: NSTextField!
     
-    private static var desktopBookmark: Data?
-    
-    public static func getDesktopBookmark() -> Data? {
-        return desktopBookmark
+    @IBAction func quitButton(_ sender: NSButton) {
+        NSApp.terminate(nil)
     }
     
-    private static var desktopsBookmark: Data?
-    
-    public static func getDesktopsBookmark() -> Data? {
-        return desktopsBookmark
-    }
-    
+    private static var desktopsURL: URL?
+
     private static func getPermisson(_ delegate: PermissionsDelegate, _ status: Status) {
         OperationQueue.main.addOperation {
             permissions = Permissions(delegate)
@@ -71,28 +64,14 @@ class Permissions {
         }
     }
     
-    private static func hasDesktopsPermisson() -> Bool {
-        if let desktopsB = DataManager.shared.getDesktopsBookmark() {
-            desktopsBookmark = desktopsB
-            return true
-        }
-        
-        return false
+    private static func hasDesktopsPermission() -> Bool {
+        guard let desktopsURL = DataManager.shared.getDesktopsURL() else { return false }
+        return Util.folderExists(desktopsURL)
     }
 
     public static func attempt(_ delegate: PermissionsDelegate) {
-        if hasDesktopsPermisson() {
-            Helper.connect { success in
-                if success {
-                    if AXIsProcessTrusted() {
-                        delegate.permissionsSuccess()
-                    } else {
-                        getPermisson(delegate, .KEYINPUT)
-                    }
-                } else {
-                    getPermisson(delegate, .HELPER)
-                }
-            }
+        if hasDesktopsPermission() {
+            delegate.permissionsComplete()
         } else {
             getPermisson(delegate, .DESKTOPS)
         }
@@ -104,35 +83,26 @@ class Permissions {
         self.delegate = delegate
     }
     
+    private static func showOpenPanel(creatingDirectories: Bool = false, _ callback: @escaping (NSApplication.ModalResponse, NSOpenPanel) -> Void) {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        //panel.canCreateDirectories = status == .DESKTOPS
+        panel.canCreateDirectories = true
+        //panel.prompt = "Suggested placement: ~/Desktops"
+        panel.allowsMultipleSelection = false
+        panel.begin(completionHandler: {
+            callback($0, panel)
+        })
+    }
+    
     @IBAction public func nextButton(_ sender: NSButton) {
-        //if (status == .DESKTOP || status == .DESKTOPS) {
         if (status == .DESKTOPS) {
-            print("OPENED")
-            guard window != nil else { return }
-            let panel = NSOpenPanel()
-            panel.canChooseFiles = false
-            panel.canChooseDirectories = true
-            //panel.canCreateDirectories = status == .DESKTOPS
-            panel.canCreateDirectories = true
-            panel.prompt = "Suggested placement: ~/Desktops"
-            panel.allowsMultipleSelection = false
-            panel.beginSheetModal(for: window!) { (response) in
-                print(response)
+            Permissions.showOpenPanel { (response, panel) in
+                //print(response)
                 if (response == .OK && panel.url != nil) {
-                    print(panel.url as Any)
-                    do {
-                        let bookmark = try panel.url!.bookmarkData()
-                        //if (self.status == .DESKTOP) {
-                        //    DataManager.shared.saveDesktopBookmark(bookmark)
-                        //    self.setStatus(.DESKTOPS)
-                        //} else {
-                            DataManager.shared.saveDesktopsBookmark(bookmark)
-                            self.setStatus(.HELPER)
-                        //}
-                    } catch {
-                        print(error)
-                        self.statusLabel?.stringValue = "Unknown error. Please try again:"
-                    }
+                    //print(panel.url as Any)
+                    DataManager.shared.saveDesktopsURL(panel.url!)
                 } else {
                     self.statusLabel?.stringValue = "Invalid selection. Please try again:"
                 }
@@ -145,54 +115,10 @@ class Permissions {
               print(AXIsProcessTrustedWithOptions(opts as CFDictionary))
             }
             setStatus(.SUCCESS)
-        } else if (status == .HELPER) {
-            blessHelper()
         } else {
             print("CLOSING!...")
             window?.close()
-            delegate.permissionsSuccess()
-        }
-    }
-    
-    private func blessHelper() {
-        let item = AuthorizationItem(name: (kSMRightBlessPrivilegedHelper as NSString).utf8String!, valueLength: 0, value: nil, flags: 0)
-        var authItemPointer = UnsafeMutablePointer<AuthorizationItem>.allocate(capacity: 1)
-        authItemPointer.initialize(to: item)
-        defer {
-            authItemPointer.deinitialize(count: 1)
-            authItemPointer.deallocate()
-        }
-        var rights = AuthorizationRights(count: 1, items: authItemPointer)
-        var environment = AuthorizationEnvironment(count: 0, items: nil)
-        var authRef: AuthorizationRef? = nil
-        let flags: AuthorizationFlags = [
-            .interactionAllowed,
-            .preAuthorize,
-            .extendRights
-        ]
-        let status = AuthorizationCreate(&rights, &environment, flags, &authRef)
-        print(NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: nil))
-        if let envItems = environment.items {
-            envItems.deinitialize(count: Int(environment.count))
-            envItems.deallocate()
-        }
-        
-        if (status == errAuthorizationSuccess) {
-            var err: Unmanaged<CFError>? = nil
-            SMJobBless(kSMDomainSystemLaunchd, "turtlmkr.desktopify.helper" as CFString, authRef!, &err)
-            print(err?.takeRetainedValue() as Any)
-            statusLabel.stringValue = "Attempting to connect to helper..."
-            Helper.connect { success in
-                OperationQueue.main.addOperation {
-                    if (success) {
-                        self.setStatus(.SUCCESS)
-                    } else {
-                        self.statusLabel.stringValue = "There was an internal error. Please try again:"
-                    }
-                }
-            }
-        } else {
-            statusLabel.stringValue = "There was an error.Please try again:"
+            delegate.permissionsComplete()
         }
     }
     
